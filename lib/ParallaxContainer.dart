@@ -1,32 +1,59 @@
 import 'package:flutter/material.dart';
 
-int n;
-class ParallaxContainer extends StatelessWidget {
+class ParallaxContainer extends StatefulWidget {
   final String index;
   final double offset;
   final double i;
   final String text;
-  final double padding;
-  final Function onPressed;
 
-  ParallaxContainer({this.index, this.offset, this.i, this.text,this.onPressed,this.padding});
+  ParallaxContainer({
+    this.index,
+    this.offset,
+    this.i,
+    this.text,
+  });
 
+  @override
+  _ParallaxContainerState createState() => _ParallaxContainerState();
+}
+
+class _ParallaxContainerState extends State<ParallaxContainer> {
+  //THIS VARIABLE ARE USED TO AFFECT THE SIZE OF THE CARD USING ANIMATED PADDING WIDGET
+  double bottomPad = 40.0;
+  double topPad = 0.0;
+  double horiPad = 25.0;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTapDown: (value){
-        n = 1;
-        onPressed(n,index);
+      onTapDown: (value) {
+        setState(() {
+          bottomPad = 50.0;
+          topPad = 10.0;
+          horiPad = 35.0;
+        });
       },
-      onTapUp: (value){
-        n = 2;
-        onPressed(n,index);
+      onTapUp: (value) {
+        setState(() {
+          setState(() {
+            bottomPad = 40.0;
+            topPad = 0.0;
+            horiPad = 25.0;
+          });
+        });
       },
-          child: AnimatedPadding(
-            duration: Duration(milliseconds: 150),
-        padding: EdgeInsets.only(left: padding, right: padding, bottom: padding == 25.0 ? 40.0 : 50.0,top: padding == 25.0 ? 0.0 : 10.0,),
+
+      // THIS WIDGET HELPS US TO MAKE THE CARD TOUCH REACTIVE...
+      child: AnimatedPadding(
+        duration: Duration(milliseconds: 150),
+        padding: EdgeInsets.only(
+          left: horiPad,
+          right: horiPad,
+          bottom: bottomPad,
+          top: topPad,
+        ),
         child: Stack(
           children: [
+            //THIS WIDGET IS ADDED INORDER TO GIVE US SOME ELEVATION...
             Card(
               elevation: 10.0,
               shape: RoundedRectangleBorder(
@@ -41,6 +68,7 @@ class ParallaxContainer extends StatelessWidget {
                       alignment: Alignment.center,
                       child: Container(
                         width: double.infinity,
+                        //THIS DECORATION WILL HELP US TO GIVE THE NICE GRADIENT ABOVE THE IMAGE...
                         foregroundDecoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.topCenter,
@@ -53,9 +81,10 @@ class ParallaxContainer extends StatelessWidget {
                           ),
                         ),
                         child: Image.asset(
-                          'assets/$index.jpg',
+                          'assets/${widget.index}.jpg',
                           fit: BoxFit.fitWidth,
-                          alignment: Alignment(0.0, -((offset.abs() + 0.4) - i)),
+                          alignment: Alignment(
+                              0.0, -((widget.offset.abs() + 0.4) - widget.i)),
                         ),
                       ),
                     ),
@@ -77,6 +106,8 @@ class ParallaxContainer extends StatelessWidget {
                         ),
                       ),
                     ),
+
+                    //THIS IS FOR THE TEXT ABOVE THE IMAGE...
                     Align(
                       alignment: Alignment.bottomLeft,
                       child: Container(
@@ -86,7 +117,7 @@ class ParallaxContainer extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              text,
+                              widget.text,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 28.0,
@@ -109,7 +140,7 @@ class ParallaxContainer extends StatelessWidget {
                                   color: Colors.white,
                                   fontSize: 25.0,
                                   fontWeight: FontWeight.normal,
-                                  fontFamily: 'SlimPlay'
+                                  fontFamily: 'SlimPlay',
                                 ),
                               ),
                             ),
@@ -121,7 +152,9 @@ class ParallaxContainer extends StatelessWidget {
                 ),
               ),
             ),
-            (index == '0')
+
+            // THIS WIDGET IS TO ADD THE TEXT ABOVE THE FIRST LIST ITEM...
+            (widget.index == '0')
                 ? OverflowBox(
                     minWidth: 0.0,
                     maxWidth: 200.0,
